@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct BookListView: View {
+    @Environment(\.modelContext) private var context
     @Query(sort: \Book.title) private var books: [Book]
     @State private var createNewBook = false
     
@@ -43,10 +44,17 @@ struct BookListView: View {
                                 }
                             }
                         }
+                        .onDelete { indexSet in
+                            indexSet.forEach { index in
+                                let book = books[index]
+                                context.delete(book)
+                            }
+                        }
+                        
                     }
+                    .listStyle(.plain)
                 }
             }
-            .listStyle(.plain)
             .padding()
             .navigationTitle("My Books")
             .toolbar {
